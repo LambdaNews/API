@@ -1,8 +1,8 @@
-# Hacker News API
+# Lambda News API
 
 ## Overview
 
-In partnership with [Firebase](https://firebase.google.com/), we're making the public Hacker News data available in near real time. Firebase enables easy access from [Android](https://firebase.google.com/docs/android/setup), [iOS](https://firebase.google.com/docs/ios/setup) and the [web](https://firebase.google.com/docs/web/setup). [Servers](https://firebase.google.com/docs/server/setup) aren't left out.
+In partnership with [Firebase](https://firebase.google.com/), we're making the public Lambda News data available in near real time. Firebase enables easy access from [Android](https://firebase.google.com/docs/android/setup), [iOS](https://firebase.google.com/docs/ios/setup) and the [web](https://firebase.google.com/docs/web/setup). [Servers](https://firebase.google.com/docs/server/setup) aren't left out.
 
 If you can use one of the many [Firebase client libraries](https://firebase.google.com/docs/libraries/), you really should. The libraries handle networking efficiently and can raise events when things change. Be sure to check them out.
 
@@ -10,19 +10,19 @@ Please email api@ycombinator.com if you find any bugs.
 
 ## URI and Versioning
 
-We hope to improve the API over time, and may later enable access to private per-user data using OAuth. The changes won't always be backward compatible, so we're going to use versioning. This first iteration will have URIs prefixed with `https://hacker-news.firebaseio.com/v0/` and is structured as described below. There is currently no rate limit.
+We hope to improve the API over time, and may later enable access to private per-user data using OAuth. The changes won't always be backward compatible, so we're going to use versioning. This first iteration will have URIs prefixed with `https://lambda-news.firebaseio.com/v0/` and is structured as described below. There is currently no rate limit.
 
 For versioning purposes, only removal of a non-optional field or alteration of an existing field will be considered incompatible changes. *Clients should gracefully handle additional fields they don't expect, and simply ignore them.*
 
 ## Design
 
-The v0 API is essentially a dump of our in-memory data structures. We know, what works great locally in memory isn't so hot over the network. Many of the awkward things are just the way HN works internally. Want to know the total number of comments on an article? Traverse the tree and count. Want to know the children of an item? Load the item and get their IDs, then load them. The newest page? Starts at item maxid and walks backward, keeping only the top level stories. Same for Ask, Show, etc.
+The v0 API is essentially a dump of our in-memory data structures. We know, what works great locally in memory isn't so hot over the network. Many of the awkward things are just the way LN works internally. Want to know the total number of comments on an article? Traverse the tree and count. Want to know the children of an item? Load the item and get their IDs, then load them. The newest page? Starts at item maxid and walks backward, keeping only the top level stories. Same for Ask, Show, etc.
 
-I'm not saying this to defend it - It's not the ideal public API, but it's the one we could release in the time we had. While awkward, it's possible to implement most of HN using it.
+I'm not saying this to defend it - It's not the ideal public API, but it's the one we could release in the time we had. While awkward, it's possible to implement most of LN using it.
 
 ## Items
 
-Stories, comments, jobs, Ask HNs and even polls are just items. They're identified by their ids, which are unique integers, and live under `/v0/item/<id>`.
+Stories, comments, jobs, Ask LNs and even polls are just items. They're identified by their ids, which are unique integers, and live under `/v0/item/<id>`.
 
 All items have some of the following properties, with required properties in bold:
 
@@ -44,7 +44,7 @@ title | The title of the story, poll or job.
 parts | A list of related pollopts, in display order.
 descendants | In the case of stories or polls, the total comment count.
 
-For example, a story: https://hacker-news.firebaseio.com/v0/item/8863.json?print=pretty
+For example, a story: https://lambda-news.firebaseio.com/v0/item/8863.json?print=pretty
 
 ```javascript
 {
@@ -60,7 +60,7 @@ For example, a story: https://hacker-news.firebaseio.com/v0/item/8863.json?print
 }
 ```
 
-comment: https://hacker-news.firebaseio.com/v0/item/2921983.json?print=pretty
+comment: https://lambda-news.firebaseio.com/v0/item/2921983.json?print=pretty
 
 ```javascript
 {
@@ -74,7 +74,7 @@ comment: https://hacker-news.firebaseio.com/v0/item/2921983.json?print=pretty
 }
 ```
 
-ask: https://hacker-news.firebaseio.com/v0/item/121003.json?print=pretty
+ask: https://lambda-news.firebaseio.com/v0/item/121003.json?print=pretty
 
 ```javascript
 {
@@ -91,7 +91,7 @@ ask: https://hacker-news.firebaseio.com/v0/item/121003.json?print=pretty
 }
 ```
 
-job: https://hacker-news.firebaseio.com/v0/item/192327.json?print=pretty
+job: https://lambda-news.firebaseio.com/v0/item/192327.json?print=pretty
 
 ```javascript
 {
@@ -106,7 +106,7 @@ job: https://hacker-news.firebaseio.com/v0/item/192327.json?print=pretty
 }
 ```
 
-poll: https://hacker-news.firebaseio.com/v0/item/126809.json?print=pretty
+poll: https://lambda-news.firebaseio.com/v0/item/126809.json?print=pretty
 
 ```javascript
 {
@@ -123,7 +123,7 @@ poll: https://hacker-news.firebaseio.com/v0/item/126809.json?print=pretty
 }
 ```
 
-and one of its parts: https://hacker-news.firebaseio.com/v0/item/160705.json?print=pretty
+and one of its parts: https://lambda-news.firebaseio.com/v0/item/160705.json?print=pretty
 
 ```javascript
 {
@@ -150,7 +150,7 @@ delay | Delay in minutes between a comment's creation and its visibility to othe
 about | The user's optional self-description. HTML.
 submitted | List of the user's stories, polls and comments.
 
-For example: https://hacker-news.firebaseio.com/v0/user/jl.json?print=pretty
+For example: https://lambda-news.firebaseio.com/v0/user/jl.json?print=pretty
 
 ```javascript
 {
@@ -171,7 +171,7 @@ The coolest part of Firebase is its support for change notifications. While you 
 
 The current largest item id is at `/v0/maxitem`. You can walk backward from here to discover all items.
 
-Example: https://hacker-news.firebaseio.com/v0/maxitem.json?print=pretty
+Example: https://lambda-news.firebaseio.com/v0/maxitem.json?print=pretty
 
 ```javascript
 9130260
@@ -181,7 +181,7 @@ Example: https://hacker-news.firebaseio.com/v0/maxitem.json?print=pretty
 
 Up to 500 top and new stories are at `/v0/topstories` and `/v0/newstories`. Best stories are at `/v0/beststories`.
 
-Example: https://hacker-news.firebaseio.com/v0/topstories.json?print=pretty
+Example: https://lambda-news.firebaseio.com/v0/topstories.json?print=pretty
 
 ```javascript
 [ 9129911, 9129199, 9127761, 9128141, 9128264, 9127792, 9129248, 9127092, 9128367, ..., 9038733 ]
@@ -189,9 +189,9 @@ Example: https://hacker-news.firebaseio.com/v0/topstories.json?print=pretty
 
 ### Ask, Show and Job Stories
 
-Up to 200 of the latest Ask HN, Show HN, and Job stories are at `/v0/askstories`, `/v0/showstories`, and `/v0/jobstories`.
+Up to 200 of the latest Ask LN, Show LN, and Job stories are at `/v0/askstories`, `/v0/showstories`, and `/v0/jobstories`.
 
-Example: https://hacker-news.firebaseio.com/v0/askstories.json?print=pretty
+Example: https://lambda-news.firebaseio.com/v0/askstories.json?print=pretty
 
 ```javascript
 [ 9127232, 9128437, 9130049, 9130144, 9130064, 9130028, 9129409, 9127243, 9128571, ..., 9120990 ]
@@ -201,7 +201,7 @@ Example: https://hacker-news.firebaseio.com/v0/askstories.json?print=pretty
 
 The item and profile changes are at `/v0/updates`.
 
-Example: https://hacker-news.firebaseio.com/v0/updates.json?print=pretty
+Example: https://lambda-news.firebaseio.com/v0/updates.json?print=pretty
 
 ```javascript
 {
